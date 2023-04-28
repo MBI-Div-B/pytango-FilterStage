@@ -13,6 +13,7 @@ import tango
 from tango import AttrWriteType, DevState, DispLevel, DeviceProxy, Attr, READ, AttributeProxy
 from tango.server import Device, attribute, command, device_property
 
+
 class FilterStage(Device):
     # Properties representing two ports of an DAQ-Device
     
@@ -26,12 +27,12 @@ class FilterStage(Device):
     )
     
     def init_device(self):
-        #set up connection to a running device server 
+        # set up connection to a running device server
         Device.init_device(self)
         self.set_state(DevState.INIT)
         self.set_status('Initialization of valve device.')
         try:
-            #open a attribute proxy. That means we are accessing a specific device server attribute of an running device. 
+            # open a attribute proxy. That means we are accessing a specific device server attribute of an running device. 
             print('hi')
             self.motor_pos = AttributeProxy(self.Motor_pos)
             self.motor_device = DeviceProxy(self.Motor_device)
@@ -59,17 +60,15 @@ class FilterStage(Device):
         self.set_state(DevState.MOVING)
         self.set_status('Motor is moving to empty space.')
         self.motor_pos.write_read(value=25)
-
-        
+     
     @command
     def homing(self):
         self.set_state(DevState.MOVING)
         self.set_status('Motor is homing to minus (-).')
         self.motor_device.command_inout("homing_minus")
 
-        
     def always_executed_hook(self):   
-        #read out value of the attribute proxy
+        # read out value of the attribute proxy
         self.pos = self.motor_pos.read().value
         if self.pos == 50:        
             self.set_state(DevState.ON)
